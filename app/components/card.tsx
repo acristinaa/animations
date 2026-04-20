@@ -2,19 +2,32 @@ interface CardProps {
   title: string;
   description: string;
   tag: string;
+  highlighted?: boolean;
+  onClick?: () => void;
+  ref?: (node: HTMLDivElement | null) => void;
 }
 
-export function Card({ title, description, tag }: CardProps) {
+export function Card({
+  title,
+  description,
+  tag,
+  highlighted,
+  onClick,
+  ref,
+}: CardProps) {
   return (
     <div
+      ref={ref}
+      onClick={onClick}
       style={{
-        background: "#1a1a1a",
-        border: "1px solid #2a2a2a",
+        background: highlighted ? "#1f1f2e" : "#1a1a1a",
+        border: highlighted ? "1px solid #5555cc" : "1px solid #2a2a2a",
         borderRadius: "12px",
         padding: "1.5rem",
         display: "flex",
         flexDirection: "column",
         gap: "0.75rem",
+        cursor: onClick ? "pointer" : "default",
       }}>
       <span
         style={{

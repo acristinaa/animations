@@ -1,6 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef, CSSProperties, ReactNode } from "react";
+import {
+  useState,
+  useEffect,
+  isValidElement,
+  cloneElement,
+  CSSProperties,
+  ReactNode,
+  ReactElement,
+} from "react";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 
 type Variant = "fade" | "slide-up" | "scale" | "blur";
@@ -37,43 +45,52 @@ export function AnimateIn({
 }: AnimateInProps) {
   const reducedMotion = useReducedMotion();
   const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [node, setNode] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (trigger === "mount") {
-      const id = setTimeout(() => setVisible(true), delay);
-      return () => clearTimeout(id);
-    }
-
-    if (trigger === "scroll") {
-      const el = ref.current;
-      if (!el) return;
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            const id = setTimeout(() => setVisible(true), delay);
-            observer.disconnect();
-            return () => clearTimeout(id);
-          }
-        },
-        { threshold: 0.15 },
-      );
-
-      observer.observe(el);
-      return () => observer.disconnect();
-    }
+    if (trigger !== "mount") return;
+    const id = setTimeout(() => setVisible(true), delay);
+    return () => clearTimeout(id);
   }, [trigger, delay]);
 
-  const style: CSSProperties = reducedMotion
+  useEffect(() => {
+    if (trigger !== "scroll" || !node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const id = setTimeout(() => setVisible(true), delay);
+          observer.disconnect();
+          return () => clearTimeout(id);
+        }
+      },
+      { threshold: 0.15 },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [trigger, node, delay]);
+
+  const animStyle: CSSProperties = reducedMotion
     ? {}
     : {
         ...(visible ? visibleStyles[variant] : hiddenStyles[variant]),
         transition: `opacity ${duration}ms ease, transform ${duration}ms ease, filter ${duration}ms ease`,
       };
 
+  if (isValidElement(children)) {
+    const child = children as ReactElement<{
+      style?: CSSProperties;
+      ref?: (n: HTMLElement | null) => void;
+    }>;
+    return cloneElement(child, {
+      ref: setNode,
+      style: { ...child.props.style, ...animStyle },
+    });
+  }
+
   return (
-    <div ref={ref} style={style}>
+    <div ref={setNode} style={animStyle}>
       {children}
     </div>
   );
