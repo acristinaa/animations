@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 
 export function useReducedMotion(): boolean {
   const [reduced, setReduced] = useState(
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
 
   useEffect(() => {
