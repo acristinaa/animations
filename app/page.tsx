@@ -1,4 +1,4 @@
-import { AnimateIn } from "./components/AnimateIn";
+import { Stagger } from "./components/stagger";
 
 export default function Home() {
   return (
@@ -9,31 +9,25 @@ export default function Home() {
         flexDirection: "column",
         gap: "2rem",
       }}>
-      <h2>Mount trigger</h2>
-      <AnimateIn variant="fade">
-        <p>Fade on mount</p>
-      </AnimateIn>
-      <AnimateIn variant="slide-up" delay={100}>
-        <p>Slide up on mount</p>
-      </AnimateIn>
+      <h2>Mount stagger</h2>
+      <Stagger variant="slide-up" staggerMs={100}>
+        <p>First item</p>
+        <p>Second item</p>
+        <p>Third item</p>
+        <p>Fourth item</p>
+      </Stagger>
 
       <div style={{ height: "100vh", display: "flex", alignItems: "center" }}>
-        <p style={{ color: "gray" }}>↓ scroll down to see the next ones</p>
+        <p style={{ color: "gray" }}>↓ scroll down</p>
       </div>
 
-      <h2>Scroll trigger (animates when visible)</h2>
-      <AnimateIn variant="fade" trigger="scroll">
-        <p>Fade on scroll</p>
-      </AnimateIn>
-      <AnimateIn variant="slide-up" trigger="scroll" delay={100}>
-        <p>Slide up on scroll</p>
-      </AnimateIn>
-      <AnimateIn variant="scale" trigger="scroll" delay={200}>
-        <p>Scale on scroll</p>
-      </AnimateIn>
-      <AnimateIn variant="blur" trigger="scroll" delay={300}>
-        <p>Blur on scroll</p>
-      </AnimateIn>
+      <h2>Scroll stagger</h2>
+      <Stagger variant="fade" staggerMs={120} trigger="scroll">
+        <p>First item</p>
+        <p>Second item</p>
+        <p>Third item</p>
+        <p>Fourth item</p>
+      </Stagger>
     </main>
   );
 }
